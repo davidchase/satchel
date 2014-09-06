@@ -5,7 +5,7 @@ var Promise = Promise || require('es6-promise');
 var indexeddb = require('./drivers/indexeddb');
 var localstorage = require('./drivers/localstorage');
 // might not need it since its no longer
-// supported and 5MB of localstorage is good
+// being developed and 5MB of localstorage is good
 var websql = require('./drivers/websql');
 
 // Declare internals
@@ -31,8 +31,6 @@ var BrowserDB = function() {
     this.config = {
         description: '',
         name: 'browserDB',
-        // Default DB size is _JUST UNDER_ 5MB, as it's the highest size
-        // we can use without a prompt.
         size: 4980736,
         storeName: 'keyvaluepairs',
         version: 1.0
@@ -48,7 +46,7 @@ BrowserDBProto.config = function(options) {
     var types = {
         'object': function() {
             if (self.ready) {
-                throw new Error("Can't call config() after browserDB has been used.");
+                throw new Error("Can't call config after browserDB has been used.");
             }
             for (var item in options) {
                 if (options.hasOwnProperty(item)) {
