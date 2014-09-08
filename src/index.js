@@ -59,13 +59,11 @@ BrowserDBProto.config = function(options) {
         'string': function() {
             return self.config[options];
         },
-        'undefined': function() {
+        'default': function() {
             return self.config;
         }
     };
-    if (types[typeof options] === 'function') {
-        types[typeof options].call(null);
-    }
+    return (types[typeof options] || types['default']).call(null);
 };
 
 BrowserDBProto.driver = function() {
