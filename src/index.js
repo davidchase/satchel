@@ -1,11 +1,12 @@
 /* global indexedDB */
 'use strict';
 // Require what we need
-var Promise = Promise || require('es6-promise');
+var Promise = require('es6-promise');
 var indexeddb = require('./drivers/indexeddb');
 var localstorage = require('./drivers/localstorage');
 // might not need it since its no longer
 // being developed and 5MB of localstorage is good
+// firefox doesn't support it at all :)
 var websql = require('./drivers/websql');
 
 // Declare internals
@@ -17,15 +18,32 @@ internals.driverType = {
     WEBSQL: 'webSQLStorage'
 };
 
+internals.storageCheck = function() {
+    var clientDB = 'clientDB';
+    // unfortunately the try and catch
+    // is needed due to browsers throwing
+    // errors such a firefox so a simple
+    // check like with indexedDB won't work
+    try {
+        localStorage.setItem(clientDB, clientDB);
+        localStorage.removeItem(clientDB);
+        return true;
+    } catch (e) {
+        return false;
+    }
+};
+
 internals.driverSupport = function() {
     var result = {};
     result[internals.driverType.WEBSQL] = !!openDatabase;
     result[internals.driverType.INDEXEDDB] =
         indexedDB && indexedDB.open('_current', 1).onupgradeneeded === null;
-    result[internals.driverType.LOCALSTORAGE] = !!localStorage;
+    result[internals.driverType.LOCALSTORAGE] = internals.storageCheck();
 
     return result;
 };
+
+
 
 var BrowserDB = function() {
     this.config = {
