@@ -4,26 +4,20 @@
 var Promise = require('es6-promise');
 var indexeddb = require('./drivers/indexeddb');
 var localstorage = require('./drivers/localstorage');
-// might not need it since its no longer
-// being developed and 5MB of localstorage is good
-// firefox doesn't support it at all :)
-var websql = require('./drivers/websql');
 
 // Declare internals
 var internals = {};
 
 internals.driverType = {
     INDEXEDDB: 'asyncStorage',
-    LOCALSTORAGE: 'localStorageWrapper',
-    WEBSQL: 'webSQLStorage'
+    LOCALSTORAGE: 'localStorageWrapper'
 };
 
 internals.storageCheck = function() {
     var clientDB = 'clientDB';
     // unfortunately the try and catch
     // is needed due to browsers throwing
-    // errors such a firefox so a simple
-    // check like with indexedDB won't work
+    // errors such a firefox...
     try {
         localStorage.setItem(clientDB, clientDB);
         localStorage.removeItem(clientDB);
@@ -35,7 +29,6 @@ internals.storageCheck = function() {
 
 internals.driverSupport = function() {
     var result = {};
-    result[internals.driverType.WEBSQL] = !!openDatabase;
     result[internals.driverType.INDEXEDDB] =
         indexedDB && indexedDB.open('_current', 1).onupgradeneeded === null;
     result[internals.driverType.LOCALSTORAGE] = internals.storageCheck();
