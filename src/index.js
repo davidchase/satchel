@@ -8,6 +8,20 @@ var localstorage = require('./drivers/localstorage');
 // Declare internals
 var internals = {};
 
+var BrowserDB = function() {
+    this.config = {
+        description: '',
+        name: 'browserDB',
+        size: 4980736,
+        storeName: 'keyvaluepairs',
+        version: 1.0
+    };
+    this.driverSet = null;
+    this.ready = false;
+};
+
+var BrowserDBProto = BrowserDB.prototype;
+
 internals.driverType = {
     INDEXEDDB: 'asyncStorage',
     LOCALSTORAGE: 'localStorageWrapper'
@@ -19,8 +33,8 @@ internals.storageCheck = function() {
     // is needed due to browsers throwing
     // errors such a firefox...
     try {
-        localStorage.setItem(clientDB, clientDB);
-        localStorage.removeItem(clientDB);
+        localstorage.setItem(clientDB, clientDB);
+        localstorage.removeItem(clientDB);
         return true;
     } catch (e) {
         return false;
@@ -38,28 +52,15 @@ internals.driverSupport = function() {
 
 
 
-var BrowserDB = function() {
-    this.config = {
-        description: '',
-        name: 'browserDB',
-        size: 4980736,
-        storeName: 'keyvaluepairs',
-        version: 1.0
-    };
-    this.driverSet = null;
-    this.ready = false;
-};
-
-var BrowserDBProto = BrowserDB.prototype;
-
 BrowserDBProto.config = function(options) {
     var self = this;
+    var item;
     var types = {
         'object': function() {
             if (self.ready) {
                 throw new Error("Can't call config after browserDB has been used.");
             }
-            for (var item in options) {
+            for (item in options) {
                 if (options.hasOwnProperty(item)) {
                     self.config[item] = options[item];
                 }
