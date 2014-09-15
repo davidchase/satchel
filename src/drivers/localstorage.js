@@ -9,7 +9,7 @@
     var dbInfo = {};
     // Promises!
     var Promise = (typeof module !== 'undefined' && module.exports) ?
-                  require('promise') : this.Promise;
+        require('promise') : this.Promise;
     var localStorage = null;
 
     // If the app is running inside a Google Chrome packaged webapp, or some
@@ -59,7 +59,7 @@
     var TYPE_FLOAT32ARRAY = 'fl32';
     var TYPE_FLOAT64ARRAY = 'fl64';
     var TYPE_SERIALIZED_MARKER_LENGTH = SERIALIZED_MARKER_LENGTH +
-                                        TYPE_ARRAYBUFFER.length;
+        TYPE_ARRAYBUFFER.length;
 
     // Remove all keys from the datastore, effectively destroying all data in
     // the app's key/value store!
@@ -211,7 +211,7 @@
         // with from the data itself.
         var serializedString = value.substring(TYPE_SERIALIZED_MARKER_LENGTH);
         var type = value.substring(SERIALIZED_MARKER_LENGTH,
-                                   TYPE_SERIALIZED_MARKER_LENGTH);
+            TYPE_SERIALIZED_MARKER_LENGTH);
 
         // Fill the string into a ArrayBuffer.
         // 2 bytes for each char.
@@ -284,7 +284,7 @@
         //
         // TODO: See why those tests fail and use a better solution.
         if (value && (value.toString() === '[object ArrayBuffer]' ||
-                      value.buffer && value.buffer.toString() === '[object ArrayBuffer]')) {
+            value.buffer && value.buffer.toString() === '[object ArrayBuffer]')) {
             // Convert binary arrays to a string and prefix the string with
             // a special marker.
             var buffer;
@@ -395,26 +395,5 @@
         });
     }
 
-    var localStorageWrapper = {
-        _driver: 'localStorageWrapper',
-        _initStorage: _initStorage,
-        // Default API, from Gaia/localStorage.
-        getItem: getItem,
-        setItem: setItem,
-        removeItem: removeItem,
-        clear: clear,
-        length: length,
-        key: key,
-        keys: keys
-    };
 
-    if (typeof define === 'function' && define.amd) {
-        define('localStorageWrapper', function() {
-            return localStorageWrapper;
-        });
-    } else if (typeof module !== 'undefined' && module.exports) {
-        module.exports = localStorageWrapper;
-    } else {
-        this.localStorageWrapper = localStorageWrapper;
-    }
 }).call(this);
