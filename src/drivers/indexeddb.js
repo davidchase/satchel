@@ -1,11 +1,7 @@
 'use strict';
+
 var Promise = Promise || require('es-promise');
 var PrimaryStorage = function(options) {
-    // Exits if no indexedDB
-    // may need to return false for checks
-    if (!indexedDB) {
-        return;
-    }
 
     this.db = {};
     this.dbInfo = {};
@@ -77,26 +73,12 @@ PrimaryProto.setItem = function(key, value) {
             .objectStore(this.dbInfo.storeName);
         var request;
 
-        // The reason we don't _save_ null is because IE 10 does
-        // not support saving the `null` type in IndexedDB. How
-        // ironic, given the bug below!
-        // See: https://github.com/mozilla/localForage/issues/161
-        if (value === null) {
-            value = undefined;
+        if (value === undefined) {
+            return reject('Value must be not be undefined or left off');
         }
 
         request = store.put(value, key);
         request.onsuccess = function() {
-            // Cast to undefined so the value passed to
-            // callback/promise is the same as what one would get out
-            // of `getItem()` later. This leads to some weirdness
-            // (setItem('foo', undefined) will return `null`), but
-            // it's not my fault localStorage is our baseline and that
-            // it's weird.
-            if (value === undefined) {
-                value = null;
-            }
-
             resolve(value);
         };
         request.onerror = function() {
