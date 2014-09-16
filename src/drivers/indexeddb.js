@@ -11,9 +11,9 @@ var PrimaryStorage = function(options) {
         storeName: options && options.storeName || 'testData'
     });
 };
-var PrimaryProto = PrimaryStorage.prototype;
+var PrimaryStorageProto = PrimaryStorage.prototype;
 
-PrimaryProto.openDB = function(options) {
+PrimaryStorageProto.openDB = function(options) {
     var _this = this;
     var option;
     if (options && typeof options === 'object') {
@@ -45,7 +45,7 @@ PrimaryProto.openDB = function(options) {
     });
 };
 
-PrimaryProto.getItem = function(key) {
+PrimaryStorageProto.getItem = function(key) {
     return new Promise(function(resolve, reject) {
         var store = this.db
             .transaction(this.dbInfo.storeName, 'readonly')
@@ -66,7 +66,7 @@ PrimaryProto.getItem = function(key) {
     }.bind(this));
 };
 
-PrimaryProto.setItem = function(key, value) {
+PrimaryStorageProto.setItem = function(key, value) {
     return new Promise(function(resolve, reject) {
         var store = this.db
             .transaction(this.dbInfo.storeName, 'readwrite')
@@ -87,7 +87,7 @@ PrimaryProto.setItem = function(key, value) {
     }.bind(this));
 };
 
-PrimaryProto.removeItem = function(key) {
+PrimaryStorageProto.removeItem = function(key) {
     return new Promise(function(resolve, reject) {
         var store = this.db
             .transaction(this.dbInfo.storeName, 'readwrite')
@@ -114,7 +114,7 @@ PrimaryProto.removeItem = function(key) {
     }.bind(this));
 };
 
-PrimaryProto.key = function(idx) {
+PrimaryStorageProto.key = function(idx) {
     return new Promise(function(resolve, reject) {
         var store = this.db
             .transaction(this.dbInfo.storeName, 'readonly')
@@ -146,7 +146,7 @@ PrimaryProto.key = function(idx) {
 };
 
 
-PrimaryProto.keys = function() {
+PrimaryStorageProto.keys = function() {
     return new Promise(function(resolve, reject) {
         var store = this.db
             .transaction(this.dbInfo.storeName, 'readonly')
@@ -170,7 +170,7 @@ PrimaryProto.keys = function() {
     }.bind(this));
 };
 
-PrimaryProto.clear = function() {
+PrimaryStorageProto.clear = function() {
     return new Promise(function(resolve, reject) {
         var store = this.db
             .transaction(this.dbInfo.storeName, 'readwrite')
@@ -187,7 +187,7 @@ PrimaryProto.clear = function() {
     }.bind(this));
 };
 
-PrimaryProto.length = function() {
+PrimaryStorageProto.length = function() {
     return new Promise(function(resolve, reject) {
         var store = this.db
             .transaction(this.dbInfo.storeName, 'readonly')
@@ -204,7 +204,7 @@ PrimaryProto.length = function() {
     }.bind(this));
 };
 
-PrimaryProto.deleteDB = function() {
+PrimaryStorageProto.deleteDB = function() {
     return new Promise(function(resolve, reject) {
         var request;
         this.db.close();

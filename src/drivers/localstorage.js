@@ -5,9 +5,9 @@
 
 var Promise = Promise || require('es-promise');
 var internals = {};
-var StorageWars = function() {};
-var StorageWarsProto = StorageWars.prototype;
-StorageWarsProto.setItem = function(key, value) {
+var FallbackStorage = function() {};
+var FallbackStorageProto = FallbackStorage.prototype;
+FallbackStorageProto.setItem = function(key, value) {
     if (typeof value === 'object') {
         value = JSON.stringify(value);
     }
@@ -19,7 +19,7 @@ StorageWarsProto.setItem = function(key, value) {
         resolve(value);
     });
 };
-StorageWarsProto.getItem = function(key) {
+FallbackStorageProto.getItem = function(key) {
     return new Promise(function(resolve, reject) {
         var value = localStorage.getItem(key);
         if (value === null) {
@@ -28,19 +28,28 @@ StorageWarsProto.getItem = function(key) {
         resolve(JSON.parse(value));
     });
 };
-StorageWarsProto.length = function() {
+FallbackStorageProto.removeItem = function(key) {
+    return new Promise(function(resolve, reject) {
+        if (key === undefined) {
+            return reject('Please specify a key to remove');
+        }
+        localStorage.removeItem(key);
+        resolve('Key was successfully removed');
+    });
+};
+FallbackStorageProto.length = function() {
     return new Promise(function(resolve) {
         var count = localStorage.length;
         resolve(count);
     });
 };
-StorageWarsProto.clear = function() {
+FallbackStorageProto.clear = function() {
     return new Promise(function(resolve) {
         localStorage.clear();
         resolve('Local storage cleared');
     });
 };
-StorageWarsProto.key = function(idx) {
+FallbackStorageProto.key = function(idx) {
     var key = 0;
     return new Promise(function(resolve, reject) {
         if (idx === undefined || typeof idx !== 'number') {
@@ -50,7 +59,7 @@ StorageWarsProto.key = function(idx) {
         resolve(key);
     });
 };
-StorageWarsProto.keys = function() {
+FallbackStorageProto.keys = function() {
     var i = 0;
     var len = localStorage.length;
     var arr = [];
@@ -68,7 +77,7 @@ internals.checkStorage = function() {
     try {
         localStorage.setItem(storage, storage);
         localStorage.removeItem(storage);
-        return Object.create(StorageWars.prototype);
+        return Object.create(FallbackStorage.prototype);
     } catch (e) {
         return false;
     }

@@ -1,92 +1,26 @@
-/* global indexedDB */
 'use strict';
-// Require what we need
-var Promise = require('es6-promise');
-var indexeddb = require('./drivers/indexeddb');
-var localstorage = require('./drivers/localstorage');
 
+var satchel = {};
 // Declare internals
 var internals = {};
 
-var BrowserDB = function() {
-    this.config = {
-        description: '',
-        name: 'browserDB',
-        size: 4980736,
-        storeName: 'keyvaluepairs',
-        version: 1.0
-    };
-    this.driverSet = null;
-    this.ready = false;
+internals.drivers = {
+    primary: require('./drivers/indexeddb'),
+    secondary: require('./drivers/localstorage')
 };
 
-var BrowserDBProto = BrowserDB.prototype;
+internals.checkPrimarySupport = function() {
+    var primarySupported = 'indexedDB' in window &&
+        indexedDB.open('_satchel', 1).onupgradeneeded === null;
 
-internals.driverType = {
-    INDEXEDDB: 'asyncStorage',
-    LOCALSTORAGE: 'localStorageWrapper'
-};
-
-internals.storageCheck = function() {
-    var clientDB = 'clientDB';
-    // unfortunately the try and catch
-    // is needed due to browsers throwing
-    // errors such a firefox...
-    try {
-        localstorage.setItem(clientDB, clientDB);
-        localstorage.removeItem(clientDB);
-        return true;
-    } catch (e) {
-        return false;
+    if (primarySupported) {
+        satchel = internals.drivers.primary;
+        return satchel;
     }
+    satchel = internals.drivers.secondary;
+    return satchel;
 };
 
-internals.driverSupport = function() {
-    var result = {};
-    result[internals.driverType.INDEXEDDB] =
-        indexedDB && indexedDB.open('_current', 1).onupgradeneeded === null;
-    result[internals.driverType.LOCALSTORAGE] = internals.storageCheck();
-
-    return result;
-};
-
-
-
-BrowserDBProto.config = function(options) {
-    var self = this;
-    var item;
-    var types = {
-        'object': function() {
-            if (self.ready) {
-                throw new Error("Can't call config after browserDB has been used.");
-            }
-            for (item in options) {
-                if (options.hasOwnProperty(item)) {
-                    self.config[item] = options[item];
-                }
-            }
-
-            return true;
-        },
-        'string': function() {
-            return self.config[options];
-        },
-        'default': function() {
-            return self.config;
-        }
-    };
-    return (types[typeof options] || types['default']).call(null);
-};
-
-BrowserDBProto.driver = function() {
-    return this.driver || null;
-};
-
-BrowserDBProto.ready = function() {};
-BrowserDBProto.setDriver = function() {};
-BrowserDBProto.supports = function(driverName) {
-    return !!internals.driverSupport[driverName];
-};
 
 // export that goodness !
-module.exports = BrowserDB;
+module.exports = satchel;
