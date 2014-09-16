@@ -114,6 +114,62 @@ PrimaryProto.removeItem = function(key) {
     }.bind(this));
 };
 
+PrimaryProto.key = function(idx) {
+    return new Promise(function(resolve, reject) {
+        var store = this.db
+            .transaction(this.dbInfo.storeName, 'readonly')
+            .objectStore(this.dbInfo.storeName);
+        var advancing = false;
+        var request = store.openCursor();
+        if (idx === undefined) {
+            return reject('Index must be present and a number');
+        }
+        request.onsuccess = function(event) {
+            var cursor = event.target.result;
+            if (idx === 0) {
+                return resolve(cursor.key);
+            }
+
+            if (!advancing) {
+                advancing = true;
+                cursor.advance(idx);
+            } else {
+                resolve(cursor.key);
+            }
+
+        };
+
+        request.onerror = function() {
+            reject(request.error);
+        };
+    }.bind(this));
+};
+
+
+PrimaryProto.keys = function() {
+    return new Promise(function(resolve, reject) {
+        var store = this.db
+            .transaction(this.dbInfo.storeName, 'readonly')
+            .objectStore(this.dbInfo.storeName);
+        var request = store.openCursor();
+        var arr = [];
+
+        request.onsuccess = function(event) {
+            var cursor = event.target.result;
+            if (!cursor) {
+                resolve(arr);
+                return;
+            }
+            arr.push(cursor.key);
+            cursor.continue();
+        };
+
+        request.onerror = function() {
+            reject(request.error);
+        };
+    }.bind(this));
+};
+
 PrimaryProto.clear = function() {
     return new Promise(function(resolve, reject) {
         var store = this.db
