@@ -1,7 +1,7 @@
 {
   "name": "browserdb",
-  "version": "0.0.1",
-  "description": "A client database that uses IndexedDB, WebSQL, or localStorage depending on browser support.",
+  "version": "0.0.2",
+  "description": "A client database that uses IndexedDB or localStorage depending on browser support.",
   "main": "index.js",
   "directories": {
     "example": "examples",
@@ -16,10 +16,9 @@
   },
   "keywords": [
     "indexedDB",
-    "websql",
     "localstorage"
   ],
-  "author": "David Annopolsky",
+  "author": "David Chase",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/davidchase/browserdb/issues"

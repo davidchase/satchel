@@ -12,18 +12,12 @@ No usage of WebSql nor plans for it.
 What is it?
 -----------
 
-This is a wrapper over localStorage and IndexedDB to create a somewhat 
-seemless usage.
+This is a wrapper over localStorage and IndexedDB to create a seemless usage
 
-It uses promises instead of callbacks so there's a polyfill for those browsers
+with promises, for those browsers that do not support promises with provide
 
-that don't currently support native promises.
-
-If you want a more full fledged wrapper you can go to [localForage](https://github.com/mozilla/localForage).
-
-Which this is partially based off of...
-
-That is if you like requirejs and AMD, etc plus support for WebSQL :/
+a polyfill thanks to [polyfill sevice](http://polyfill.webservices.ft.com/v1/)
+by the guys over at the [Financial Times](https://github.com/Financial-Times)
 
 
 Under the hood
@@ -31,6 +25,10 @@ Under the hood
 
 It uses [commonjs](http://wiki.commonjs.org/wiki/Modules/1.1.1) pattern for modules and [browserify](http://browserify.org/) to package them for the browser.
 
-And a small promise poyfill.
+And a small promise poyfill hosted via cdn.
 
 Other than its all vanilla js
+
+License
+-------
+MIT
